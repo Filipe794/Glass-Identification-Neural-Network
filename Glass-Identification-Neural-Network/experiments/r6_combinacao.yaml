@@ -1,0 +1,47 @@
+# =============================================================================
+# R6 - Juntar tudo e conferir (ablação)
+# -----------------------------------------------------------------------------
+# Pergunta: os vencedores das rodadas anteriores funcionam juntos, e cada um ainda é
+#           necessário?
+# Objetivo: o baseline é a combinação de todos os vencedores (R1 a R4; o R5 é exploratório
+#           e não entra). Cada experimento tira UM deles. Se tirar um elemento não piora
+#           significativamente, ele sai (regra da mais simples).
+# Critério: f1_macro e balanced_accuracy.
+#   python compare.py --rodada R6_ --ref <vencedor do R4> --salvar
+#   (--ref: compara cada ablação com a combinação completa, não com a de maior média)
+#
+# Atualizar antes de rodar (todos os valores abaixo são PROVISÓRIOS, iguais ao ponto de
+# partida do R1; troque pelos vencedores reais):
+# - baseline: scaler (R1), model (R2 e R3) e balancing (R4).
+# - Em cada ablação, o override do model repete o model do baseline COM a diferença
+#   indicada (o override substitui a etapa inteira).
+# Experimentos cujo elemento já é o padrão no baseline ficam iguais ao baseline e são
+# pulados pelo hash.
+# =============================================================================
+
+baseline_name: R6_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor de R1
+  selection: none
+  balancing: none                             # ATUALIZAR: vencedor de R4
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+
+experiments:
+  # Sem padronização (R1)
+  - name: R6_sem_padronizacao
+    override: {scaler: none}
+
+  # Sem reamostragem (R4) — se o baseline já não usa, será pulado
+  - name: R6_sem_reamostragem
+    override: {balancing: none}
+
+  # Sem a regularização escolhida (R3): alpha volta ao padrão (model do baseline SEM alpha)
+  - name: R6_alpha_padrao
+    override:
+      model: {name: mlp, hidden_layer_sizes: [16]}  # ATUALIZAR: model do baseline sem alpha (e sem early_stopping)
+
+  # Sem a arquitetura escolhida (R2): volta à rede inicial de 1 camada de 16 neurônios
+  - name: R6_rede_inicial
+    override:
+      model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: model do baseline com hidden_layer_sizes [16]

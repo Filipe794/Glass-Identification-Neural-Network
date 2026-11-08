@@ -1,0 +1,36 @@
+# =============================================================================
+# R1 - Padronização das variáveis
+# -----------------------------------------------------------------------------
+# Pergunta: quanto a escala das variáveis atrapalha a rede? (RI ~1,5; Si ~72; Ba e Fe
+#           quase sempre 0)
+# Objetivo: fixar o scaler antes das outras rodadas. É a hipótese principal do plano
+#           (docs/baseline-e-plano-de-treinamento.md): sem padronização a rede colapsa em
+#           poucas classes.
+# Critério: f1_macro. Entre as configs sem diferença significativa para a melhor, a mais
+#           simples (none -> standard -> minmax -> robust).
+# Baseline: padronização padrão e uma rede pequena de partida (1 camada de 16 neurônios,
+#           alpha 0.001). Esses dois valores são o PONTO DE PARTIDA: o R2 e o R3 os
+#           investigam. Aqui só o scaler varia.
+#
+# Lembretes:
+# - O override SUBSTITUI a etapa inteira, inclusive o model.
+# - sweep: {etapa.parametro: [valores]} gera um experimento por combinação.
+# - Parâmetros iguais ao padrão do modelo (max_iter: 2000, activation: relu...) saem da
+#   config: scaler=standard no sweep é o próprio baseline e é pulado pelo hash.
+# - A partir daqui, o scaler fica DENTRO do pipeline: aprende no treino de cada fold.
+#
+# Fechar a rodada:  python compare.py --rodada R1_ --salvar
+# =============================================================================
+
+baseline_name: R1_baseline
+
+baseline:
+  scaler: standard
+  selection: none
+  balancing: none
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}
+
+experiments:
+  - name: R1_padronizacao
+    sweep:
+      scaler.name: [none, standard, robust, minmax]

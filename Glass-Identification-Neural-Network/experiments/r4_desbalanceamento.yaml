@@ -1,0 +1,43 @@
+# =============================================================================
+# R4 - Desbalanceamento (reamostragem dentro do fold)
+# -----------------------------------------------------------------------------
+# Pergunta: reamostrar as classes raras (3, 5 e 6) melhora o F1-macro?
+#   none         sem tratamento
+#   random_over  duplica amostras das classes menores
+#   smote        cria amostras sintéticas por interpolação (Chawla et al., 2002)
+# Como o MLPClassifier não tem class_weight, o tratamento é por reamostragem. Ela é feita
+# DENTRO do pipeline do imblearn: só o treino de cada fold é reamostrado, e o fold de
+# validação nunca é tocado (senão a nota seria inflada).
+# Critério: f1_macro e balanced_accuracy; a classe 6 (9 amostras no total, ~5 no treino de
+#           cada fold) é a que mais se beneficiaria. Confira a matriz de confusão no final.
+# Cuidados:
+# - SMOTE precisa de k_neighbors + 1 amostras em cada classe. Com ~5 amostras da classe 6
+#   no treino do fold, k_neighbors até 4 funciona. O padrão do projeto é 3, rodado em
+#   R4_reamostragem (smote); R4_smote_k testa 2 e 4.
+# - Não combine com early_stopping: true (o builder recusa; ver r3_regularizacao.yaml).
+#   Se o vencedor do R3 usa early_stopping, troque-o por false aqui e registre isso em
+#   docs/anotacoes_artigo.md.
+#   python compare.py --rodada R4_ --incluir <vencedor do R3> --salvar
+#   python compare.py --rodada R4_ --metric balanced_accuracy --incluir <vencedor do R3>
+#
+# Atualizar antes de rodar:
+# - scaler e model: vencedores de R1, R2 e R3.
+# =============================================================================
+
+baseline_name: R4_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor de R1
+  selection: none
+  balancing: none
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+
+experiments:
+  - name: R4_reamostragem
+    sweep:
+      balancing.name: [none, random_over, smote]
+
+  - name: R4_smote_k
+    override: {balancing: smote}
+    sweep:
+      balancing.k_neighbors: [2, 4]

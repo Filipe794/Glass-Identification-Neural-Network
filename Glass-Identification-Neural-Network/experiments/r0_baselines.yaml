@@ -1,0 +1,39 @@
+# =============================================================================
+# R0 - Modelos de referência (baselines)
+# -----------------------------------------------------------------------------
+# Pergunta: o que se consegue sem a rede? Todo modelo precisa superar o piso.
+# Objetivo: fixar as referências com o MESMO protocolo (mesmo split, mesma CV) da rede.
+#   dummy most_frequent   sempre a classe mais frequente do treino (piso: acurácia ~35%,
+#                         balanced_accuracy 1/6, F1-macro ~0,09)
+#   dummy stratified      sorteio respeitando as proporções das classes
+#   logreg padronizada    "modelo simples" sem não linearidade (a rede precisa justificar a
+#                         complexidade a mais)
+#   logreg balanceada     o mesmo com class_weight (o MLP não tem class_weight; mostra o que
+#                         o peso de classe faz num modelo que o aceita)
+# Critério: não há escolha. Servem de comparação no R9 (mlp_vs_baselines.py).
+#
+# Rodar antes das outras rodadas: python run_experiments.py experiments/r0_baselines.yaml
+# =============================================================================
+
+baseline_name: R0_dummy_majoritaria
+
+baseline:
+  scaler: none
+  selection: none
+  balancing: none
+  model: {name: dummy, strategy: most_frequent}
+
+experiments:
+  - name: R0_dummy_estratificado
+    override:
+      model: {name: dummy, strategy: stratified}
+
+  - name: R0_logreg_padronizada
+    override:
+      scaler: standard
+      model: {name: logreg}
+
+  - name: R0_logreg_balanceada
+    override:
+      scaler: standard
+      model: {name: logreg, class_weight: balanced}

@@ -1,0 +1,32 @@
+# =============================================================================
+# R10 - Robustez à semente da rede
+# -----------------------------------------------------------------------------
+# !!! RODAR SÓ DEPOIS DO TESTE FINAL (R8). NÃO MUDA A ESCOLHA DO MODELO. !!!
+#
+# Pergunta: o resultado depende da inicialização aleatória dos pesos?
+# Objetivo: repetir o vencedor com outras 5 sementes (random_state da rede). Os folds do CV
+#           e a reamostragem (se houver) continuam com a SEED 42: só a inicialização e a
+#           ordem dos mini-lotes mudam.
+# Depois de rodar:
+#   python stability.py --run <vencedor> --seeds R10_
+#   (mostra o f1_macro de cada semente e se o ranking das variáveis se mantém)
+#
+# Atualizar antes de rodar:
+# - Todo o baseline: igual ao vencedor final (R7).
+# - O override de model: repita o model do baseline (a semente entra pelo sweep).
+# =============================================================================
+
+baseline_name: R10_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor final
+  selection: none
+  balancing: none                             # ATUALIZAR: vencedor final
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedor final
+
+experiments:
+  - name: R10_sementes
+    override:
+      model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: model do vencedor final
+    sweep:
+      model.random_state: [1, 7, 123, 2024, 31415]

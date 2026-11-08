@@ -1,0 +1,32 @@
+# =============================================================================
+# R3 - Regularização
+# -----------------------------------------------------------------------------
+# Pergunta: quanta regularização L2 (alpha) a rede precisa? O early stopping ajuda?
+# Objetivo: controlar o sobreajuste numa base de 170 amostras de treino. O alpha varia em
+#           escala logarítmica (1e-4 a 10), como sugere o plano.
+# Critério: f1_macro; o MAIOR alpha (rede mais regular) sem diferença significativa para a
+#           melhor.
+# early_stopping: separa 10% do treino de cada fold para validar a parada. Com as classes
+#           raras (5 amostras no treino do fold), essa separação as reduz ainda mais; por
+#           isso a rodada compara COM e SEM. Não vale junto com balancing (a reamostragem
+#           duplicaria amostras entre treino e validação interna: o builder recusa).
+#   python compare.py --rodada R3_ --incluir <vencedor do R2> --salvar
+#   Confira também "convergiu (%)": alpha alto pode mudar o nº de iterações.
+#
+# Atualizar antes de rodar:
+# - scaler e model (hidden_layer_sizes, activation, solver): vencedores de R1 e R2.
+# =============================================================================
+
+baseline_name: R3_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor de R1
+  selection: none
+  balancing: none
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedor de R2 (alpha é o ponto de partida)
+
+experiments:
+  - name: R3_regularizacao
+    sweep:
+      model.alpha: [0.0001, 0.001, 0.01, 0.1, 1, 10]
+      model.early_stopping: [false, true]

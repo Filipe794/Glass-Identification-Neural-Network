@@ -1,0 +1,40 @@
+# =============================================================================
+# R2 - Tamanho e forma da rede
+# -----------------------------------------------------------------------------
+# Pergunta: quantos neurônios bastam? Uma camada ou duas? Qual ativação e qual otimizador?
+# Objetivo: com 170 amostras de treino, redes grandes tendem a sobreajustar; o plano sugere
+#           1 camada com 8 a 32 neurônios. Aqui se confere isso (e se uma 2ª camada ajuda).
+# Critério: f1_macro; a MENOR rede (menos parâmetros) sem diferença significativa para a
+#           melhor. O compare.py mostra o nº de parâmetros e a convergência de cada uma.
+# Três experimentos, cada um muda uma coisa:
+#   R2_neuronios   hidden_layer_sizes (uma e duas camadas)
+#   R2_ativacao    relu, tanh, logistic
+#   R2_solver      adam (padrão) ou lbfgs (costuma ir bem em bases pequenas)
+#   python compare.py --rodada R2_ --incluir <vencedor do R1> --salvar
+#
+# Atualizar antes de rodar:
+# - scaler: vencedor do R1.
+# - O baseline do R2 é o vencedor do R1 (o runner o pula pelo hash se for a mesma config;
+#   por isso o compare.py precisa do --incluir).
+# =============================================================================
+
+baseline_name: R2_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor de R1
+  selection: none
+  balancing: none
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}
+
+experiments:
+  - name: R2_neuronios
+    sweep:
+      model.hidden_layer_sizes: [[4], [8], [16], [32], [64], [16, 8], [32, 16]]
+
+  - name: R2_ativacao
+    sweep:
+      model.activation: [relu, tanh, logistic]
+
+  - name: R2_solver
+    sweep:
+      model.solver: [adam, lbfgs]

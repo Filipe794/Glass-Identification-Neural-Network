@@ -1,0 +1,35 @@
+# =============================================================================
+# R5 - Agrupamento de classes (rodada exploratória; não escolhe vencedor)
+# -----------------------------------------------------------------------------
+# Pergunta: como o desbalanceamento e o tamanho das classes afetam a rede? O que acontece
+#           quando o problema vira binário?
+#   window_vs_other    janela (classes 1, 2, 3) x não janela (5, 6, 7)
+#   float_vs_nonfloat  só janelas: float (1 e 3) x não float (2). É a tarefa do estudo
+#                      original citado na página da UCI (Evett e Spiehler, 1987)
+# Objetivo: contrastar com o problema de 6 classes usando a MESMA rede (vencedora do R4).
+#           Não entra na escolha do modelo final: é outro problema.
+# Atenção: as notas dos três alvos NÃO são comparáveis entre si (problemas e amostras
+#          diferentes; o float_vs_nonfloat descarta as classes 5, 6 e 7). O compare.py recusa
+#          comparar alvos diferentes. Leia cada resultado no seu próprio problema e use a
+#          matriz de confusão e o balanced_accuracy para a discussão.
+#   python summarize.py     (a coluna "target" separa os problemas)
+#
+# Atualizar antes de rodar:
+# - Todo o baseline: igual ao vencedor do R4 (ele roda como R5_baseline, no problema de 6
+#   classes, e serve de referência de leitura).
+# =============================================================================
+
+baseline_name: R5_baseline
+
+baseline:
+  scaler: standard                            # ATUALIZAR: vencedor de R1
+  selection: none
+  balancing: none                             # ATUALIZAR: vencedor de R4
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+
+experiments:
+  - name: R5_janela_vs_outros
+    override: {target: window_vs_other}
+
+  - name: R5_float_vs_nao_float
+    override: {target: float_vs_nonfloat}
