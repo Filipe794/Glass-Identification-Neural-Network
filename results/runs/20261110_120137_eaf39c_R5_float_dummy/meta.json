@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_120137_eaf39c_R5_float_dummy",
+  "name": "R5_float_dummy",
+  "hash": "eaf39c7a38a2955a028556834e309aefd22e48f41f842ccecc0a46dc6576df1c",
+  "date": "2026-11-10T12:01:37",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 130,
+  "seed": 42,
+  "target": "float_vs_nonfloat",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 8.01,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

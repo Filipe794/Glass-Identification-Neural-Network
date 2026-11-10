@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_120129_705aa3_R5_janela_dummy",
+  "name": "R5_janela_dummy",
+  "hash": "705aa39de236675c39577748a5399d0c03cec5813bbe5423b8f974303be35f1d",
+  "date": "2026-11-10T12:01:29",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "window_vs_other",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 8.04,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

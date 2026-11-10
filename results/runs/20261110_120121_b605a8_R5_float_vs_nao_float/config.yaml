@@ -1,0 +1,15 @@
+name: R5_float_vs_nao_float
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  alpha: 1
+target:
+  name: float_vs_nonfloat

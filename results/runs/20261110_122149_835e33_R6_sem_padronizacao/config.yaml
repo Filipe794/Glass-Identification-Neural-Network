@@ -1,0 +1,13 @@
+name: R6_sem_padronizacao
+scaler:
+  name: none
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  alpha: 1

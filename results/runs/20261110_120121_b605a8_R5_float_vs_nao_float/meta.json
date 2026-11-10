@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_120121_b605a8_R5_float_vs_nao_float",
+  "name": "R5_float_vs_nao_float",
+  "hash": "b605a825a4aa8667127fea3047b20e7c05342bc6bc12f5a1e9d44587234d7d3a",
+  "date": "2026-11-10T12:01:21",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 130,
+  "seed": 42,
+  "target": "float_vs_nonfloat",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 21.49,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

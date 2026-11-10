@@ -1,0 +1,30 @@
+{
+  "accuracy": {
+    "mean": 0.7647058823529411,
+    "std": 0.0
+  },
+  "balanced_accuracy": {
+    "mean": 0.5,
+    "std": 0.0
+  },
+  "f1_macro": {
+    "mean": 0.4333333333333334,
+    "std": 5.551115123125783e-17
+  },
+  "precision_macro": {
+    "mean": 0.38235294117647056,
+    "std": 0.0
+  },
+  "recall_macro": {
+    "mean": 0.5,
+    "std": 0.0
+  },
+  "roc_auc_ovr": {
+    "mean": 0.5,
+    "std": 0.0
+  },
+  "log_loss": {
+    "mean": 8.480859620968742,
+    "std": 0.0
+  }
+}

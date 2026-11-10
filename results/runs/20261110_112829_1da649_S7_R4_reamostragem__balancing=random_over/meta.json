@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_112829_1da649_S7_R4_reamostragem__balancing=random_over",
+  "name": "S7_R4_reamostragem__balancing=random_over",
+  "hash": "1da6497825e920bf88ff181f1f35ccf3ab2a1888cb97bd89a0a5bf9b80ff85bf",
+  "date": "2026-11-10T11:28:30",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 7,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 41.37,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

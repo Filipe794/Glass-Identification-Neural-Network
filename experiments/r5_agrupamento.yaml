@@ -14,18 +14,39 @@
 #          matriz de confusão e o balanced_accuracy para a discussão.
 #   python summarize.py     (a coluna "target" separa os problemas)
 #
-# Atualizar antes de rodar:
-# - Todo o baseline: igual ao vencedor do R4 (ele roda como R5_baseline, no problema de 6
-#   classes, e serve de referência de leitura).
+# Experimentos de apoio, por alvo (acrescentados em 10/11/2026):
+#   *_dummy               piso: classe majoritária no próprio problema. Sem ele, os números
+#                         binários não têm referência (no treino, janela x outros = 130 x 40,
+#                         piso de acurácia ≈ 76%; float x não float = 69 x 61, piso ≈ 53%).
+#                         Usa balancing none: com random_over as classes empatam no treino e o
+#                         most_frequent deixaria de ser o piso real.
+#   *_logreg              regressão logística balanceada: a rede ainda acrescenta algo quando o
+#                         problema vira binário, ou um modelo linear já basta?
+#   *_sem_reamostragem    a mesma rede sem random_over: o ganho da reamostragem depende do grau
+#                         de desbalanceamento (76/24 x 53/47)?
+# Comparar por alvo (o prefixo filtra o problema; o compare.py recusa misturar alvos):
+#   python compare.py --rodada R5_janela --salvar
+#   python compare.py --rodada R5_janela --metric balanced_accuracy --salvar
+#   python compare.py --rodada R5_janela --metric accuracy --salvar
+#   python tabela_rodada.py --rodada R5_janela
+#
+#   python compare.py --rodada R5_float --salvar
+#   python compare.py --rodada R5_float --metric balanced_accuracy --salvar
+#   python compare.py --rodada R5_float --metric accuracy --salvar
+#   python tabela_rodada.py --rodada R5_float
+#
+# Atualizado em 10/11/2026: baseline = vencedor do R4 (standard, random_over, [32], tanh, adam,
+# alpha = 1). Ele roda como R5_baseline no problema de 6 classes (é pulado pelo hash: é a mesma
+# config do vencedor do R4) e serve só de referência de leitura.
 # =============================================================================
 
 baseline_name: R5_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor de R1
+  scaler: standard                            # vencedor de R1
   selection: none
-  balancing: none                             # ATUALIZAR: vencedor de R4
-  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+  balancing: random_over                        # vencedor de R4
+  model: {name: mlp, hidden_layer_sizes: [32], activation: tanh, alpha: 1}  # vencedores de R2 e R3
 
 experiments:
   - name: R5_janela_vs_outros
@@ -33,3 +54,21 @@ experiments:
 
   - name: R5_float_vs_nao_float
     override: {target: float_vs_nonfloat}
+
+  # Pisos por alvo (balancing none: com random_over o most_frequent deixa de ser o piso)
+  - name: R5_janela_dummy
+    override: {target: window_vs_other, balancing: none, model: {name: dummy, strategy: most_frequent}}
+  - name: R5_float_dummy
+    override: {target: float_vs_nonfloat, balancing: none, model: {name: dummy, strategy: most_frequent}}
+
+  # Modelo linear por alvo
+  - name: R5_janela_logreg
+    override: {target: window_vs_other, balancing: none, model: {name: logreg, class_weight: balanced}}
+  - name: R5_float_logreg
+    override: {target: float_vs_nonfloat, balancing: none, model: {name: logreg, class_weight: balanced}}
+
+  # Rede sem reamostragem por alvo
+  - name: R5_janela_sem_reamostragem
+    override: {target: window_vs_other, balancing: none}
+  - name: R5_float_sem_reamostragem
+    override: {target: float_vs_nonfloat, balancing: none}

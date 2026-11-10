@@ -1,0 +1,7 @@
+,pred_1 construção float,pred_2 construção não float,pred_3 veículo float,pred_5 recipientes,pred_6 louça de mesa,pred_7 faróis
+real_1 construção float,8,5,1,0,0,0
+real_2 construção não float,2,10,2,0,1,0
+real_3 veículo float,0,1,2,0,0,0
+real_5 recipientes,0,0,1,2,0,0
+real_6 louça de mesa,0,0,0,0,2,0
+real_7 faróis,0,0,0,0,0,6

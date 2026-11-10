@@ -1,0 +1,3 @@
+execução,média,desvio,dif (outra - ref),t,p,significativo (p < α),parâmetros,iterações (média),convergiu (%)
+20261110_112829_1da649_S7_R4_reamostragem__balancing=random_over,0.6482352941176471,0.0764615379259855,,,,referência,518,923.72,100.0
+20261110_135956_4a56e3_S7_R6_alpha_padrao,0.6905882352941175,0.07446231716916074,0.0423529411764706,1.1047850821952678,0.27464821616170837,não,518,1629.44,96.0

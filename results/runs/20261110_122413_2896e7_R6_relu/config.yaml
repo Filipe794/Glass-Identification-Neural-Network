@@ -1,0 +1,12 @@
+name: R6_relu
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  alpha: 1

@@ -1,0 +1,13 @@
+name: S7_R4_reamostragem__balancing=smote
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: smote
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  alpha: 1

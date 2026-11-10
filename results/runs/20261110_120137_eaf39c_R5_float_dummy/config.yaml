@@ -1,0 +1,11 @@
+name: R5_float_dummy
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: dummy
+target:
+  name: float_vs_nonfloat

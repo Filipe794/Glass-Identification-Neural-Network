@@ -174,11 +174,14 @@ Glass-Identification-Neural-Network/
 │   └── runner.py        validação cruzada + importâncias por fold + gravação dos resultados
 ├── experiments/
 │   ├── r0_baselines.yaml ... r6_combinacao.yaml     uma rodada por arquivo (seção 7)
+│   │   (inclui r2b_interacao.yaml: interação tamanho x ativação x solver)
 │   └── r10_robustez.yaml                            outras sementes (depois do teste)
 ├── docs/
 │   ├── baseline-e-plano-de-treinamento.md   baselines da UCI e plano de treinamento
 │   ├── fundamentacao-mlp.md                 a rede neural e as escolhas do projeto
-│   └── anotacoes_artigo.md                  decisões, achados e limitações (para o relatório)
+│   ├── anotacoes_artigo.md                  decisões, achados e limitações (para o relatório)
+│   ├── afirmacoes-chave.md                  afirmações importantes, com evidência e referência
+│   └── tabelas/                             tabelas Markdown por rodada (tabela_rodada.py)
 ├── results/
 │   ├── runs/             uma pasta por execução (só se acrescenta)
 │   ├── final/            avaliações no teste
@@ -192,6 +195,8 @@ Glass-Identification-Neural-Network/
 ├── final_test.py
 ├── mlp_vs_baselines.py
 ├── stability.py
+├── cv_seed_check.py     roda um YAML com outra semente de CV (checagem de sensibilidade à partição)
+├── tabela_rodada.py     junta os CSVs do compare.py numa tabela Markdown em docs/tabelas/
 ├── requirements.txt
 └── CLAUDE.md          instruções para o Claude Code
 ```
@@ -346,7 +351,7 @@ rodada.
 | **R2b** `r2b_interacao` | Os melhores níveis de tamanho, ativação e otimizador funcionam melhor juntos? | grid fatorial dos 3 melhores `hidden_layer_sizes` × `activation` × `solver` (até 18 configurações) | `f1_macro`; a **menor** rede sem diferença significativa; o vencedor é o final do R2 |
 | **R3** `r3_regularizacao` | Quanta regularização? O early stopping ajuda? | `alpha`: 1e-4 a 10 × `early_stopping` (com e sem) | `f1_macro`; o **maior** `alpha` sem diferença significativa |
 | **R4** `r4_desbalanceamento` | Reamostrar as classes raras ajuda? | `balancing`: `none`, `random_over`, `smote`; `k_neighbors` 2 e 4 | `f1_macro` e `balanced_accuracy` |
-| **R5** `r5_agrupamento` | E se o problema virar binário? | `target`: `window_vs_other`, `float_vs_nonfloat` | **exploratória**: não escolhe vencedor |
+| **R5** `r5_agrupamento` | E se o problema virar binário? | `target`: `window_vs_other`, `float_vs_nonfloat`; por alvo, também dummy (piso), regressão logística balanceada e a rede sem reamostragem | **exploratória**: não escolhe vencedor |
 | **R6** `r6_combinacao` | Os vencedores funcionam juntos? | todos os vencedores + ablação (tirar um de cada vez) | o critério da rodada que decidiu cada ponto |
 
 Depois do R6:
@@ -371,7 +376,9 @@ Depois do R6:
 - **R4:** o ganho da reamostragem, se houver, deve aparecer nas classes 3, 5 e 6 (matriz de
   confusão e `balanced_accuracy`), não na acurácia.
 - **R5:** o problema binário é mais fácil e menos desbalanceado (no `float_vs_nonfloat`, 87 x 76);
-  contrastar mostra quanto do erro vem do número de classes e do tamanho delas.
+  contrastar mostra quanto do erro vem do número de classes e do tamanho delas. Cada problema
+  binário é lido contra o seu próprio piso (dummy no mesmo alvo): no `window_vs_other`, responder
+  sempre "janela" já acerta ≈ 76%.
 - **R10:** a variação entre sementes mede o quanto da diferença entre configurações é só ruído
   de inicialização.
 

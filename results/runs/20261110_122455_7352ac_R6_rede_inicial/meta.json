@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_122455_7352ac_R6_rede_inicial",
+  "name": "R6_rede_inicial",
+  "hash": "7352aca50e44cc18f43b86460fec4aadb29fffe9b19470ba17b18dba7b54a10a",
+  "date": "2026-11-10T12:24:55",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 41.5,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

@@ -4,44 +4,61 @@
 # Pergunta: os vencedores das rodadas anteriores funcionam juntos, e cada um ainda é
 #           necessário?
 # Objetivo: o baseline é a combinação de todos os vencedores (R1 a R4; o R5 é exploratório
-#           e não entra). Cada experimento tira UM deles. Se tirar um elemento não piora
-#           significativamente, ele sai (regra da mais simples).
-# Critério: f1_macro e balanced_accuracy.
-#   python compare.py --rodada R6_ --ref <vencedor do R4> --salvar
-#   (--ref: compara cada ablação com a combinação completa, não com a de maior média)
+#           e não entra). Cada experimento tira UM deles e compara com a combinação completa.
+# Critério: f1_macro e balanced_accuracy, contra a combinação completa (--ref).
+#           Critério de leitura: ver docs/anotacoes_artigo.md, seção R6 (registrar ANTES de rodar).
 #
-# Atualizar antes de rodar (todos os valores abaixo são PROVISÓRIOS, iguais ao ponto de
-# partida do R1; troque pelos vencedores reais):
-# - baseline: scaler (R1), model (R2 e R3) e balancing (R4).
-# - Em cada ablação, o override do model repete o model do baseline COM a diferença
-#   indicada (o override substitui a etapa inteira).
-# Experimentos cujo elemento já é o padrão no baseline ficam iguais ao baseline e são
-# pulados pelo hash.
+# Rodar e fechar a rodada:
+#   python run_experiments.py experiments/r6_combinacao.yaml
+#   python compare.py --rodada R6_ --ref 20261110_013202_485353_R4_reamostragem__balancing=random_over --incluir 20261110_011819_aec03d_R3_regularizacao__alpha=1_early_stopping=False --salvar
+#   (repetir com --metric balanced_accuracy e --metric accuracy)
+#   python tabela_rodada.py --rodada R6_
+#   --ref: o vencedor do R4 é a combinação completa (o R6_baseline tem a mesma config e é pulado
+#          pelo hash). --incluir: o R6_sem_reamostragem tem a mesma config do vencedor do R3 e
+#          também é pulado.
+#
+# Atualizado em 10/11/2026 (vencedores reais):
+# - scaler: standard (R1); balancing: random_over (R4); model: [32], tanh, adam (R2b) com
+#   alpha = 1, sem early_stopping (R3). O solver adam é o padrão e não aparece na config.
+# - Em cada ablação, o override do model repete o model do baseline COM a diferença indicada
+#   (o override substitui a etapa inteira).
+# - A decisão do R2b tinha dois elementos (tamanho [32] e ativação tanh): eles são tirados um
+#   por vez e também juntos (volta à rede inicial [16], relu).
 # =============================================================================
 
 baseline_name: R6_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor de R1
+  scaler: standard                            # vencedor do R1
   selection: none
-  balancing: none                             # ATUALIZAR: vencedor de R4
-  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+  balancing: random_over                      # vencedor do R4
+  model: {name: mlp, hidden_layer_sizes: [32], activation: tanh, alpha: 1}  # vencedores do R2b e do R3
 
 experiments:
   # Sem padronização (R1)
   - name: R6_sem_padronizacao
     override: {scaler: none}
 
-  # Sem reamostragem (R4) — se o baseline já não usa, será pulado
+  # Sem reamostragem (R4). É a config do vencedor do R3: pulado pelo hash, entra por --incluir.
   - name: R6_sem_reamostragem
     override: {balancing: none}
 
-  # Sem a regularização escolhida (R3): alpha volta ao padrão (model do baseline SEM alpha)
+  # Sem a regularização escolhida (R3): alpha volta ao padrão do scikit-learn (0.0001)
   - name: R6_alpha_padrao
     override:
-      model: {name: mlp, hidden_layer_sizes: [16]}  # ATUALIZAR: model do baseline sem alpha (e sem early_stopping)
+      model: {name: mlp, hidden_layer_sizes: [32], activation: tanh}
 
-  # Sem a arquitetura escolhida (R2): volta à rede inicial de 1 camada de 16 neurônios
+  # Sem o tamanho escolhido (R2b): 16 neurônios, volta ao ponto de partida
+  - name: R6_16_neuronios
+    override:
+      model: {name: mlp, hidden_layer_sizes: [16], activation: tanh, alpha: 1}
+
+  # Sem a ativação escolhida (R2b): relu (padrão), mantendo [32] e alpha = 1
+  - name: R6_relu
+    override:
+      model: {name: mlp, hidden_layer_sizes: [32], alpha: 1}
+
+  # Sem a arquitetura escolhida (R2b inteiro): rede inicial [16], relu, mantendo alpha = 1
   - name: R6_rede_inicial
     override:
-      model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: model do baseline com hidden_layer_sizes [16]
+      model: {name: mlp, hidden_layer_sizes: [16], alpha: 1}

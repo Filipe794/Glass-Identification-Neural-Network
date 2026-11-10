@@ -382,36 +382,346 @@ Todas as configurações convergem em 100% dos folds.
     F1-macro **e** na balanced accuracy; se não, volta-se à regra ("nenhuma");
   - dentro da reamostragem, fica `random_over`, a menos que o SMOTE seja significativamente melhor
     com a semente 7 (aí fica o SMOTE).
-  - Resultado: [ ].
+  - **Resultado: confirmado, `random_over`.** As duas partes do critério foram atendidas: (1)
+    `random_over` continua acima de "nenhuma" no F1-macro (+0,048) e na balanced accuracy (+0,080);
+    (2) o SMOTE não é significativamente melhor (−0,002 no F1-macro, +0,002 na balanced accuracy,
+    p ≈ 0,93). Tabela: `docs/tabelas/S7_R4.md`.
+
+| Reamostragem | F1 (semente 42) | F1 (semente 7) | Bal. acc. (42) | Bal. acc. (7) | Acurácia (42) | Acurácia (7) |
+|---|---:|---:|---:|---:|---:|---:|
+| **`random_over`** | 0,663 | **0,664** | 0,706 | 0,708 | 0,644 | 0,648 |
+| SMOTE (k = 3) | **0,679** | 0,663 | **0,723** | **0,710** | 0,658 | 0,641 |
+| nenhuma | 0,611 | 0,616 | 0,628 | 0,628 | **0,673** | **0,673** |
+
+  - **O ganho da reamostragem se repetiu** entre as sementes, com tamanho parecido; a balanced
+    accuracy de "nenhuma" contra a reamostragem ficou de novo perto da significância (p = 0,060 na
+    semente 42; p = 0,052 na semente 7).
+  - **A ordem entre `random_over` e SMOTE se inverteu** (SMOTE à frente na semente 42, atrás na 7):
+    a diferença entre eles é ruído, o que apoia escolher o mais simples.
+  - **A troca com a acurácia também se repetiu:** "nenhuma" tem a maior acurácia nas duas sementes;
+    a reamostragem perde ≈ 0,025 nas classes grandes para ganhar nas raras.
+  - Pasta do vencedor (semente 42, para o `--incluir` das próximas rodadas):
+    `20261110_013202_485353_R4_reamostragem__balancing=random_over`.
 - Cuidado registrado: SMOTE com a classe 6 (≈ 5–6 amostras por fold de treino); `k_neighbors` até
   4 funciona, o padrão do projeto é 3.
 
 ## R5 — Agrupamento (exploratória)
 
-- janela × outros: [ ]; float × não float: [ ].
-- Notas não comparáveis entre alvos. Usar só para discutir quanto do erro vem do número de classes.
+Rede: a vencedora do R4 (`standard`, `random_over`, `[32]`, tanh, adam, `alpha = 1`). Alvos:
+`window_vs_other` (janela 1, 2, 3 × outros 5, 6, 7) e `float_vs_nonfloat` (só janelas: float 1 e
+3 × não float 2; descarta as classes 5, 6 e 7; é a tarefa do estudo original da UCI).
+
+- **Experimentos de apoio por alvo (acrescentados antes de rodar, 10/11/2026):** sem eles, os
+  números binários não têm referência.
+  - `*_dummy` (classe majoritária, `balancing: none`): o piso de cada problema. No treino, janela ×
+    outros = 130 × 40 (piso de acurácia ≈ 76%); float × não float = 69 × 61 (piso ≈ 53%). O
+    `balancing: none` é obrigatório: com `random_over` as classes empatam e o `most_frequent`
+    deixaria de ser o piso.
+  - `*_logreg` (regressão logística balanceada): a rede acrescenta algo no problema binário, ou um
+    modelo linear já basta?
+  - `*_sem_reamostragem` (a mesma rede sem `random_over`): o ganho da reamostragem depende do grau
+    de desbalanceamento (76/24 no janela × outros; 53/47 no float × não float)?
+
+Valores: média entre os folds (5 × 10); p do F1-macro contra a melhor média do próprio alvo.
+Tabelas: `docs/tabelas/R5_janela.md` e `docs/tabelas/R5_float.md`. A rede binária tem 353
+parâmetros (uma saída) e converge em 100% dos folds nos dois alvos.
+
+**Janela × outros** (treino 130 × 40; piso de acurácia 76,5%)
+
+| Modelo | F1-macro | Bal. acc. | Acurácia | p (F1) |
+|---|---:|---:|---:|---:|
+| Regressão logística balanceada | **0,902** | **0,905** | 0,930 | — |
+| Rede sem reamostragem | 0,902 | 0,890 | **0,933** | 0,991 |
+| Rede (com `random_over`) | 0,895 | 0,895 | 0,925 | 0,700 |
+| Dummy (classe majoritária) | 0,433 | 0,500 | 0,765 | < 0,001 |
+
+**Float × não float** (só janelas; treino 69 × 61; piso de acurácia 53,1%)
+
+| Modelo | F1-macro | Bal. acc. | Acurácia | p (F1) |
+|---|---:|---:|---:|---:|
+| Rede (com `random_over`) | **0,748** | **0,750** | **0,754** | — |
+| Rede sem reamostragem | 0,743 | 0,746 | 0,750 | 0,853 |
+| Regressão logística balanceada | 0,689 | 0,692 | 0,694 | 0,162 |
+| Dummy (classe majoritária) | 0,347 | 0,500 | 0,531 | < 0,001 |
+
+- **Os dummies confirmam o protocolo:** acurácia igual às proporções do treino (0,765 e 0,531) e
+  balanced accuracy 0,500.
+- **Janela × outros é fácil:** ≈ 93% de acurácia contra piso de 76,5%. Rede e regressão logística
+  empatam (p ≥ 0,47 entre os três modelos): um modelo linear basta; a não linearidade não acrescenta.
+- **Float × não float é difícil:** ≈ 75% contra piso de 53%. É a tarefa do estudo original da UCI
+  (Evett e Spiehler, 1987). A rede fica ≈ 0,06 acima da regressão logística (p = 0,16; abaixo do
+  limite detectável de ≈ 0,10, ver `afirmacoes-chave.md`, entrada 4).
+- **A rede supera a regressão logística em algum dos problemas binários?** Só no float × não float,
+  e sem significância (+0,059 no F1-macro). No janela × outros, não (empate).
+- **O ganho da reamostragem muda com o desbalanceamento?** Nos dois problemas binários a
+  reamostragem não faz diferença (−0,007 a +0,005 no F1-macro). No float × não float, isso era
+  esperado (53/47). No janela × outros, o desbalanceamento é forte (76/24) e mesmo assim não houve
+  ganho: a minoria tem 40 exemplos e é bem separável. Isso sugere que o ganho de ≈ 0,05 da
+  reamostragem no problema de 6 classes (R4) vem das classes MUITO pequenas (7 a 14 exemplos no
+  treino), e não do desbalanceamento em si.
+- **⚠ HIPÓTESE CENTRAL (H1) — leitura combinada (inferência, não medida direta):** se janela × não janela é quase resolvido e
+  float × não float é o gargalo, boa parte do erro do problema de 6 classes deve vir da confusão
+  entre as classes 1 e 2 (janelas de edificação float e não float), mais do que das classes raras
+  isoladamente. A conferir na matriz de confusão do teste final (R8): ver "Teste da H1" na seção R8.
+- Notas não comparáveis entre alvos (problemas e amostras diferentes). Ler cada uma contra o seu
+  próprio piso e usar só para discutir quanto do erro vem do número de classes e do tamanho delas.
+- Comparar por alvo: `compare.py --rodada R5_janela` e `--rodada R5_float` (o `compare.py` recusa
+  misturar alvos); tabelas com `tabela_rodada.py`.
 
 ## R6 — Combinação e ablação
 
-- Combinação final: [ ] vs. ablações [ ].
+Combinação completa (baseline do R6 = vencedor do R4): `standard` → `random_over` → MLP `[32]`,
+tanh, adam, `alpha = 1`, sem early stopping. Ablações, cada uma tirando um elemento (voltando ao
+valor de antes da decisão, não ao padrão do scikit-learn): sem padronização (R1), sem
+reamostragem (R4), `alpha` padrão 0,0001 (R3), 16 neurônios (R2b, tamanho), relu (R2b, ativação)
+e rede inicial `[16]`, relu (R2b inteiro). Sem `hidden_layer_sizes`, o scikit-learn usaria 100
+neurônios, configuração nunca testada; por isso a ablação do tamanho volta a `[16]`, o ponto de
+partida do R2.
+
+- **Critério de leitura (decidido ANTES de rodar, 10/11/2026): o R6 confirma, não redecide.**
+  - Um elemento só sai se a ablação **não for pior em média nas duas métricas** (F1-macro e
+    balanced accuracy) que a combinação completa (`--ref`). Se tirar o elemento piora a média em
+    pelo menos uma delas, ele fica.
+  - Motivo: o critério original ("se tirar não piora significativamente, sai") não funciona com o
+    poder do teste desta base (diferença mínima detectável ≈ 0,08–0,10; ver
+    `afirmacoes-chave.md`, entrada 4). Aplicado à risca, ele tiraria quase tudo, inclusive a
+    padronização e a reamostragem, mantidas por desvios justificados no R1 e no R4: o R6 desfaria
+    essas decisões pela mesma falta de poder que as motivou. O critério adotado usa o mesmo tipo de
+    evidência dos desvios (direção consistente em duas métricas).
+  - Os dois elementos do R2b (tamanho e ativação) são lidos um por vez; se os dois saírem, vale a
+    ablação conjunta (`R6_rede_inicial`) como conferência.
+  - Se mais de um elemento sair, a combinação reduzida é a configuração final do R7.
+- **Resultado (semente 42):** combinação completa (`--ref`, vencedor do R4): F1-macro 0,663,
+  balanced accuracy 0,706, acurácia 0,644. Tabela: `docs/tabelas/R6.md`.
+
+| Ablação | Δ F1-macro | Δ Bal. acc. | Δ Acurácia | p (F1) | Decisão pelo critério |
+|---|---:|---:|---:|---:|---|
+| `alpha` padrão (0,0001) | **+0,015** | **+0,0001** | +0,045 | 0,727 | **sai o `alpha = 1`** |
+| 16 neurônios | −0,007 | −0,001 | +0,001 | 0,829 | fica o `[32]` |
+| relu | −0,011 | −0,030 | +0,014 | 0,796 | fica o tanh |
+| rede inicial (`[16]`, relu) | −0,015 | −0,024 | +0,019 | 0,688 | confirma as duas acima |
+| sem reamostragem | −0,052 | −0,077 | +0,029 | 0,295 | fica o `random_over` |
+| sem padronização | −0,087 | −0,071 | −0,079 | 0,077 | fica o `standard` |
+
+  Nenhuma ablação é significativamente diferente da combinação completa (p ≥ 0,077 no F1-macro).
+
+  - **Sai um elemento, o `alpha = 1`.** Configuração resultante: `standard` → `random_over` → MLP
+    `[32]`, tanh, adam, `alpha` padrão (0,0001). Ela já foi rodada: é a execução `R6_alpha_padrao`
+    (F1-macro 0,678, balanced accuracy 0,706, acurácia 0,689, convergência 96%, ≈ 1672 iterações).
+  - **A saída passou por um fio na balanced accuracy** (+0,00008, praticamente empate; pela regra,
+    empate conta como "não pior"). O F1-macro (+0,015) e a acurácia (+0,045) apontam na mesma direção.
+  - **Coerente com o R3:** lá a regra aceitou um custo de ≈ 0,03 do `alpha = 1`, consistente nas duas
+    sementes; o R6 desfaz justamente essa escolha. Com a reamostragem, o `alpha` alto deixou de ser
+    necessário, e a convergência continua alta (96%).
+  - **`[32]` fica por margem mínima** (−0,007 e −0,001 ao voltar para `[16]`): pela regra é claro,
+    mas o tamanho pouco importa nessa faixa, e o relatório deve dizer isso.
+  - **Padronização e reamostragem se confirmaram**, com as maiores perdas ao serem tiradas
+    (−0,05 a −0,09). Sem padronização, ficou perto da significância (p = 0,077 no F1-macro;
+    p = 0,065 na acurácia), mais forte que no R1.
+  - **Limitação:** as ablações de tamanho e ativação foram feitas com `alpha = 1`; não foram refeitas
+    com o `alpha` padrão.
+  - Pasta da configuração resultante (semente 42): `20261110_122254_0747b5_R6_alpha_padrao`.
+- **Checagem com a semente de CV 7 (critério registrado ANTES de rodar, 10/11/2026):** a decisão
+  muda a configuração por margem mínima numa das métricas, então roda-se `R6_alpha_padrao` com a
+  semente 7 e compara-se com a combinação completa na semente 7 (`S7_R4_..._random_over`, `--ref`).
+  - O `alpha = 1` sai de vez se, com a semente 7, o `R6_alpha_padrao` também não for pior em média
+    no F1-macro e na balanced accuracy. Se for pior em alguma das duas, o `alpha = 1` volta e a
+    configuração final é a combinação completa.
+  - **Resultado: confirmado, o `alpha = 1` sai de vez.** Com a semente 7, o `R6_alpha_padrao` não
+    foi pior em nenhuma das duas métricas: +0,019 no F1-macro (p = 0,61), +0,002 na balanced
+    accuracy e +0,043 na acurácia (0,683 / 0,710 / 0,691 × 0,664 / 0,708 / 0,648). Tabela:
+    `docs/tabelas/S7_R6.md`.
+
+| `alpha` padrão × combinação completa | Δ F1-macro | Δ Bal. acc. | Δ Acurácia |
+|---|---:|---:|---:|
+| semente 42 | +0,015 | +0,0001 | +0,045 |
+| semente 7 | +0,019 | +0,002 | +0,043 |
+
+  - A direção se repetiu nas três métricas e nas duas sementes, com tamanhos parecidos. A balanced
+    accuracy segue praticamente empatada; o ganho está no F1-macro e na acurácia.
 
 ## R7 — Config final
 
-[Pipeline completo e a justificativa por rodada.]
+**Pipeline final:** `StandardScaler` → `RandomOverSampler` (só no treino de cada fold, dentro do
+pipeline do `imblearn`) → `MLPClassifier(hidden_layer_sizes=(32,), activation="tanh",
+solver="adam", alpha=0.0001, max_iter=2000, random_state=42)`, sem early stopping. 518 parâmetros.
+
+**Desempenho na validação cruzada (treino, 5 × 10):** F1-macro 0,678 (semente 42) e 0,683 (semente
+7); balanced accuracy 0,706 e 0,710; acurácia 0,689 e 0,691; convergência 96% nas duas.
+Execução de referência (semente 42): `20261110_122254_0747b5_R6_alpha_padrao`.
+
+**Justificativa por rodada:**
+
+| Rodada | Decisão | Como foi decidida |
+|---|---|---|
+| R0 | pisos: dummy (F1-macro 0,088) e regressão logística (0,513; balanceada 0,616) | referência, sem escolha |
+| R1 | scaler `standard` | **desvio da regra** (a regra escolheria `none`): efeito de 0,11 consistente nas três métricas e fundamento teórico; confirmado no R6 (sem padronização é a pior ablação) |
+| R2 | níveis do R2b: `[32]`, `[32, 16]`, `[64]`; as três ativações; os dois solvers | os 3 melhores tamanhos pelo F1-macro (um fator por vez) |
+| R2b | `[32]`, tanh, adam | regra registrada antes dos resultados (vencedor só da grade; menos parâmetros; desempate pelo F1-macro); confirmado com a semente 7 pela regra de desempate (maior média nas duas sementes) |
+| R3 | `alpha = 1`, sem early stopping | regra da rodada (maior `alpha` sem diferença significativa); confirmado com a semente 7, mas com custo consistente de ≈ 0,03; o early stopping falhou (parada em ≈ 18 iterações) |
+| R4 | `random_over` | **desvio da regra** (a regra escolheria "nenhuma"), só na pergunta "reamostrar ou não"; dentro da reamostragem, o mais simples; confirmado com a semente 7 |
+| R5 | exploratória (não escolhe) | janela × outros fácil (≈ 93%, a logística basta); float × não float difícil (≈ 75%); hipótese central H1 a testar no R8 |
+| R6 | sai o `alpha = 1` (volta ao padrão 0,0001); ficam `standard`, `random_over`, `[32]` e tanh | critério registrado antes de rodar (sai se não for pior em média no F1-macro e na balanced accuracy); confirmado com a semente 7 |
+
+**Resumo para o relatório:** quase nenhuma diferença foi significativa (limite detectável de
+≈ 0,08–0,10; `afirmacoes-chave.md`, entrada 4). As decisões se apoiaram em regras registradas antes
+dos resultados e, nos dois desvios (R1 e R4), na direção consistente entre métricas e sementes de
+CV. As escolhas com mais efeito foram a padronização e a reamostragem; tamanho, ativação e `alpha`
+mudam pouco o resultado nesta base.
+
+**Próximos passos:** R8 (teste final, uma única vez, nesta configuração), R9 (rede × referências)
+e R10 (robustez à semente da rede, só depois do R8).
 
 ## R8 — Teste final
 
-- Métricas no teste: [ ]; baseline majoritário no mesmo teste: [ ].
-- Matriz de confusão: classes mais confundidas [ ].
+Rodado uma única vez (10/11/2026), na configuração do R7:
+`python final_test.py --run 20261110_122254_0747b5_R6_alpha_padrao` (resultados em
+`results/final/20261110_122254_0747b5_R6_alpha_padrao/`). Teste: 43 exemplos (14, 15, 3, 3, 2 e 6
+nas classes 1, 2, 3, 5, 6 e 7).
+
+| | Teste | CV, semente 42 | CV, semente 7 | Majoritário no teste* |
+|---|---:|---:|---:|---:|
+| F1-macro | **0,726** | 0,678 | 0,683 | ≈ 0,086 |
+| Balanced accuracy | **0,762** | 0,706 | 0,710 | 0,167 |
+| Acurácia | **0,698** | 0,689 | 0,691 | 0,349 |
+| Precisão macro | 0,737 | | | |
+| ROC AUC (um-contra-todos, macro) | 0,942 | | | |
+| Log loss | 1,020 | | | |
+
+\* Calculado (sempre a classe 2: 15 de 43); conferir com `baseline_majoritario.json`.
+
+- **Teste ≈ 0,05 acima da CV no F1-macro:** dentro do ruído esperado (desvio entre folds ≈ 0,09; o
+  teste tem o tamanho de pouco mais de um fold, e classes com 2–3 exemplos movem muito o
+  F1-macro). Não ler como "generaliza melhor que o esperado"; ler como consistente com a CV.
+
+**Por classe (teste):**
+
+| Classe | Precisão | Recall | F1 | Suporte |
+|---|---:|---:|---:|---:|
+| 1 construção float | 0,800 | 0,571 | 0,667 | 14 |
+| 2 construção não float | 0,625 | 0,667 | 0,645 | 15 |
+| 3 veículo float | 0,333 | 0,667 | 0,444 | 3 |
+| 5 recipientes | 1,000 | 0,667 | 0,800 | 3 |
+| 6 louça de mesa | 0,667 | 1,000 | 0,800 | 2 |
+| 7 faróis | 1,000 | 1,000 | 1,000 | 6 |
+
+**Matriz de confusão (linhas = real; colunas = previsto):**
+
+| real \ previsto | 1 | 2 | 3 | 5 | 6 | 7 |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 8 | 5 | 1 | 0 | 0 | 0 |
+| 2 | 2 | 10 | 2 | 0 | 1 | 0 |
+| 3 | 0 | 1 | 2 | 0 | 0 | 0 |
+| 5 | 0 | 0 | 1 | 2 | 0 | 0 |
+| 6 | 0 | 0 | 0 | 0 | 2 | 0 |
+| 7 | 0 | 0 | 0 | 0 | 0 | 6 |
+
+- **Classes mais confundidas: 1 e 2** (5 de real 1 → previsto 2; 2 de real 2 → previsto 1). 30 acertos
+  e 13 erros no total.
+- **11 dos 13 erros (85%) são entre janelas** (classes 1, 2 e 3); só 2 cruzam janela × não janela
+  (real 2 → previsto 6; real 5 → previsto 3). Janela × não janela no teste: 41 de 43 (95%),
+  coerente com o R5 (≈ 93% na CV).
+- **A classe 3 atrai erros:** recebeu 6 previsões, só 2 certas (precisão 0,33). Hipótese (não
+  testada): efeito do `random_over`, que reforça as classes pequenas e empurra previsões para elas.
+- **Classes raras:** faróis 6/6, louça de mesa 2/2, recipientes 2/3. Com 2–3 exemplos, indicativos.
+- **Teste da H1 (hipótese central do R5; critério registrado ANTES do teste final, 10/11/2026):**
+  H1 = boa parte do erro do problema de 6 classes vem da confusão entre as classes 1 e 2 (janelas
+  de edificação float × não float), mais do que das classes raras.
+  - **Confirmada** se os erros 1↔2 (real 1 previsto 2, mais real 2 previsto 1) forem a maior parte
+    dos erros da matriz de confusão do teste (≥ 50% dos erros).
+  - **Refutada** se a maior parte dos erros envolver as classes 3, 5, 6 ou 7.
+  - **Ressalva:** o teste tem 43 exemplos (14 da classe 1, 15 da classe 2), então poucos erros mudam
+    a proporção; ler como indício. Evidência mais forte exigiria as previsões da validação cruzada
+    por classe (`cross_val_predict` no treino), que o runner não grava.
+  - **Resultado: erros 1↔2 = 7 de 13 erros (54%); H1 confirmada pelo critério**, mas por margem
+    mínima: um único erro 1↔2 a menos (6 de 12 = 50%) ainda confirmaria, dois a menos não. Pela
+    ressalva registrada, ler como indício. Reforço: 11 dos 13 erros (85%) estão entre janelas
+    (1, 2 e 3), e só 2 cruzam janela × não janela.
 
 ## R9 — Rede × referências
 
-- Diferenças fold a fold e no teste: [ ].
+Comando: `python mlp_vs_baselines.py --mlp 20261110_122254_0747b5_R6_alpha_padrao --baselines
+20261109_231353_e6648f_R0_dummy_majoritaria 20261109_231410_91dd22_R0_logreg_padronizada
+20261109_231420_cf92ae_R0_logreg_balanceada` (resultados em `results/mlp_vs_baselines/`).
+
+**Validação cruzada (fold a fold, teste t corrigido; * = p < 0,05):**
+
+| Rede × | Δ F1-macro | Δ Bal. acc. | Δ Acurácia | Δ ROC AUC | Δ Log loss |
+|---|---:|---:|---:|---:|---:|
+| Dummy majoritário | +0,590* | +0,539* | +0,330* | +0,412* | −21,96* |
+| Logística padronizada | **+0,165*** (p = 0,006) | **+0,185*** (p = 0,002) | +0,075 (p = 0,07) | **+0,073*** (p = 0,001) | +0,095 (pior; p = 0,47) |
+| Logística balanceada | +0,063 (p = 0,22) | +0,040 (p = 0,47) | **+0,121*** (p = 0,013) | **+0,068*** (p = 0,004) | −0,023 (p = 0,87) |
+
+- **Primeiras diferenças significativas fora do dummy:** contra a logística padronizada, a rede
+  ganha onde a diferença passa de ≈ 0,1 (coerente com o limite detectável, `afirmacoes-chave.md`,
+  entrada 4).
+- **Contra a logística balanceada, a vantagem no F1-macro e na balanced accuracy some:** grande
+  parte do ganho da rede sobre o modelo linear vem do tratamento do desbalanceamento, não da não
+  linearidade.
+- **O que a não linearidade parece acrescentar:** a rede equilibra as classes sem pagar em
+  acurácia (a logística balanceada perde 0,12) e tem ROC AUC significativamente maior que as duas
+  logísticas. Como a AUC mede a ordenação das probabilidades, independentemente de limiar e de peso
+  de classe, é o sinal mais limpo de que a rede discrimina melhor.
+- **Cuidado: a comparação na CV favorece a rede.** Ela foi escolhida comparando dezenas de
+  configurações nos mesmos folds (efeito de seleção), e as logísticas ficaram com os parâmetros
+  padrão (`C = 1`, sem ajuste). Parte da vantagem na CV pode ser otimista; o teste, usado uma
+  única vez, não tem esse viés.
+
+**Teste (43 exemplos):**
+
+| | F1-macro | Bal. acc. | Acurácia | ROC AUC | Log loss |
+|---|---:|---:|---:|---:|---:|
+| **Rede** | **0,726** | **0,762** | **0,698** | **0,942** | 1,020 |
+| Logística padronizada | 0,672 | 0,718 | **0,698** | 0,905 | **0,822** |
+| Logística balanceada | 0,607 | 0,739 | 0,558 | 0,898 | 1,063 |
+| Dummy majoritário | 0,086 | 0,167 | 0,349 | 0,500 | 23,47 |
+
+**F1 por classe no teste** (`f1_por_classe.csv` / `.png`):
+
+| Classe (suporte) | Rede | Logística padronizada | Logística balanceada | Dummy |
+|---|---:|---:|---:|---:|
+| 1 construção float (14) | 0,667 | 0,667 | 0,583 | 0 |
+| 2 construção não float (15) | 0,645 | 0,645 | 0,364 | 0,517 |
+| 3 veículo float (3) | **0,444** | 0 | 0,308 | 0 |
+| 5 recipientes (3) | 0,800 | **1,000** | 0,667 | 0 |
+| 6 louça de mesa (2) | 0,800 | 0,800 | 0,800 | 0 |
+| 7 faróis (6) | **1,000** | 0,923 | 0,923 | 0 |
+
+- **No teste, a rede lidera no F1-macro, na balanced accuracy e na AUC** e empata em acurácia com a
+  logística padronizada: a mesma ordem da CV.
+- **A vantagem da rede sobre a logística padronizada no teste vem quase toda da classe 3** (2 de 3
+  acertos × nenhum). Nas demais classes elas empatam ou trocam por pouco (a logística vai melhor
+  em recipientes, a rede em faróis). Com 3 exemplos na classe 3, frágil, mas coerente com o papel
+  da reamostragem.
+- **Calibração:** a logística padronizada tem log loss melhor (0,82 × 1,02 no teste; 1,05 × 1,15 na
+  CV, sem significância): as probabilidades da rede são menos calibradas. Hipótese (não testada): o
+  `random_over` muda as proporções das classes no treino e desloca as probabilidades. Importa se as
+  probabilidades forem usadas, não só a classe prevista.
+- Para o relatório: a legenda do `f1_por_classe.png` usa os nomes das pastas; trocar por rótulos
+  legíveis antes de usar a figura.
 
 ## R10 — Robustez e estabilidade
 
+Configuração final (R7) com 5 sementes de inicialização da rede (`random_state` 1, 7, 123, 2024 e
+31415), além da 42 já rodada (`R6_alpha_padrao`). Folds da CV e `random_over` seguem com a semente
+42: só a inicialização muda (o `adam` é full-batch nesta base, então a ordem dos mini-lotes não
+varia). Não muda a escolha do modelo; rodado depois do R8.
+
+Comandos:
+`python run_experiments.py experiments/r10_robustez.yaml` e
+`python stability.py --run 20261110_122254_0747b5_R6_alpha_padrao --seeds R10_`.
+Opcional: `compare.py --rodada R10_ --ref 20261110_122254_0747b5_R6_alpha_padrao` (diferenças
+pareadas contra a semente 42) e `tabela_rodada.py --rodada R10_`.
+
+- **Como ler (definido antes de rodar, 10/11/2026):** comparar a variação do F1-macro entre
+  sementes com (a) a diferença entre as finalistas das rodadas (≈ 0,01–0,03 de F1-macro no R2b,
+  R3 e R6) e (b) o desvio entre folds (≈ 0,09). Se a variação entre sementes for da ordem de (a),
+  parte das diferenças entre configurações é ruído de inicialização, e não só de partição dos
+  folds (complementa a checagem com a semente de CV 7, que mediu a partição).
 - f1_macro por semente (média, desvio, mín., máx.): [ ].
-- Concordância do ranking de importâncias (Spearman): [ ].
+- Balanced accuracy e acurácia por semente: [ ].
+- Concordância do ranking de importâncias (Spearman): [ ]; variável mais importante em cada semente [ ].
+- A variação entre sementes é da ordem das diferenças entre finalistas? [ ].
 
 ## Limitações a citar
 
@@ -434,4 +744,9 @@ Todas as configurações convergem em 100% dos folds.
   de não reamostrar). Os dois têm efeito de 0,07–0,11 e direção consistente, mas não significância;
   o do R4 foi checado com outra semente de CV.
 - O efeito da reamostragem por classe (3, 5 e 6) não foi medido na CV, só no teste final, pequeno.
+- O critério do R6 foi trocado antes de rodar ("sai se não piorar significativamente" → "sai se
+  não piorar em média no F1-macro e na balanced accuracy"), pelo baixo poder do teste.
+- As regressões logísticas de referência não tiveram hiperparâmetros ajustados (`C = 1`), enquanto a
+  rede passou por várias rodadas de seleção nos mesmos folds: a comparação do R9 na CV favorece a
+  rede; o teste não tem esse viés, mas é pequeno.
 - Importância por permutação com variáveis correlacionadas pode se diluir.

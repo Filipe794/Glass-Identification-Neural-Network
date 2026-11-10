@@ -99,7 +99,7 @@ Um YAML por rodada em `experiments/`; o vencedor de uma rodada vira o baseline d
 | `r2b_interacao.yaml` | grid dos 3 melhores `hidden_layer_sizes` x `activation` x `solver` (interações que o R2 não vê) | `f1_macro`, a menor rede no empate; o vencedor é o final do R2 |
 | `r3_regularizacao.yaml` | `alpha` x `early_stopping` | `f1_macro`, o maior `alpha` no empate |
 | `r4_desbalanceamento.yaml` | `balancing` (none, random_over, smote) e `k_neighbors` | `f1_macro` e `balanced_accuracy` |
-| `r5_agrupamento.yaml` | `target` (janela x outros, float x não float) | exploratória: não escolhe vencedor |
+| `r5_agrupamento.yaml` | `target` (janela x outros, float x não float); por alvo, também dummy, logreg balanceada e a rede sem reamostragem | exploratória: não escolhe vencedor; comparar por alvo (`--rodada R5_janela` / `R5_float`) |
 | `r6_combinacao.yaml` | combinação + ablação | o critério da rodada que decidiu cada ponto |
 | `r10_robustez.yaml` | o vencedor com 5 outras sementes (só depois do teste final) | — |
 

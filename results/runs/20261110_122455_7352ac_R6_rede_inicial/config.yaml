@@ -1,0 +1,12 @@
+name: R6_rede_inicial
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 16
+  alpha: 1

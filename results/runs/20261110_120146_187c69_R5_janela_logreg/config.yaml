@@ -1,0 +1,12 @@
+name: R5_janela_logreg
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: logreg
+  class_weight: balanced
+target:
+  name: window_vs_other

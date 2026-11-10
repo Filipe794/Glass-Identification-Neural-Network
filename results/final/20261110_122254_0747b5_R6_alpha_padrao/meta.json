@@ -1,0 +1,7 @@
+{
+  "run": "20261110_122254_0747b5_R6_alpha_padrao",
+  "date": "2026-11-10T14:02:20",
+  "target": "six_classes",
+  "n_train": 170,
+  "n_test": 43
+}

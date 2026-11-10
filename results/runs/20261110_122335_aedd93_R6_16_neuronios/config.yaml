@@ -1,0 +1,13 @@
+name: R6_16_neuronios
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 16
+  activation: tanh
+  alpha: 1

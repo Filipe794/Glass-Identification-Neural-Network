@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_122149_835e33_R6_sem_padronizacao",
+  "name": "R6_sem_padronizacao",
+  "hash": "835e3377889cb30bb0f15ced8fc0fc7290b992c7e2909362e658fac8b6dc5d98",
+  "date": "2026-11-10T12:21:49",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 36.16,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_135956_4a56e3_S7_R6_alpha_padrao",
+  "name": "S7_R6_alpha_padrao",
+  "hash": "4a56e31a87599177ab6a5c4546ec44c4f4b93839643108fb9bca71500a65a4e8",
+  "date": "2026-11-10T13:59:58",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 7,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 67.12,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

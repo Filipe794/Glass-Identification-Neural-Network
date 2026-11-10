@@ -129,8 +129,9 @@ def main():
         linhas.append("| " + " | ".join(celulas) + " |")
 
     nota = (f"Média{' ± desvio' if args.desvio else ''} entre os folds. Ordenado pelo F1-macro. "
-            f"p: teste t corrigido (Nadeau e Bengio), bilateral, no F1-macro, contra a melhor média "
-            f"({rotulo(ref)}); em negrito, p < α. Negrito nas métricas: melhor média da coluna.")
+            f"p: teste t corrigido (Nadeau e Bengio), bilateral, no F1-macro, contra a referência do "
+            f"compare.py ({rotulo(ref)}: a melhor média ou a passada em --ref); em negrito, p < α. "
+            f"Negrito nas métricas: melhor média da coluna.")
     texto = (f"## Rodada {prefixo}\n\n" + "\n".join(linhas) + f"\n\n{nota}\n\n"
              f"Gerado por `tabela_rodada.py --rodada {args.rodada}` a partir de "
              f"`results/comparacoes/{prefixo}_<métrica>.csv`.\n")

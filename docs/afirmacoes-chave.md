@@ -127,3 +127,53 @@ que já observa a mesma instabilidade nos baselines da UCI.
 significativo.
 
 ---
+
+## 4. Diferença mínima detectável pelo teste (poder do teste)
+
+**Texto original:**
+> Nesta base, só diferenças da ordem de 0,08–0,10 de F1-macro ou balanced accuracy podem ser
+> detectadas como significativas. Efeitos menores, mesmo consistentes entre sementes (como os
+> ≈ 0,03 do `alpha = 1` e os ≈ 0,05–0,08 da reamostragem), ficam abaixo do poder do teste.
+
+**Formulação sugerida para o relatório:**
+As comparações usam o teste t corrigido de Nadeau e Bengio sobre as 50 notas da validação
+cruzada (5 folds × 10 repetições): t = média(d) / √((1/50 + 1/4) · var(d)), em que d é a diferença
+entre os dois modelos em cada fold e 1/4 = n_validação / n_treino (34/136). Com 49 graus de
+liberdade e α = 0,05, a diferença média só é significativa quando supera ≈ 1,04 vezes o desvio
+padrão das diferenças por fold (2,01 × 0,52). Nesta base, esse desvio fica em ≈ 0,08–0,10, o que
+coloca a diferença mínima detectável em ≈ 0,08–0,10 de F1-macro ou de balanced accuracy. Efeitos
+menores, ainda que consistentes entre partições, não são detectados; por isso a consistência entre
+sementes de CV foi usada como evidência complementar.
+
+**Por que a correção torna o teste exigente:** sem o termo 1/4, o limite seria ≈ 0,02–0,03, quase
+quatro vezes menor. A correção existe porque as 50 notas não são independentes: os treinos de
+folds diferentes compartilham ≈ 75% das amostras, e as 10 repetições reusam os mesmos dados. O
+teste t comum trataria as notas como independentes e daria falsos positivos demais; o corrigido é
+mais honesto, mas tem menos poder.
+
+**Evidência no trabalho (R4; limites calculados a partir do t e da diferença de cada CSV):**
+
+| Comparação | Diferença observada | Desvio das diferenças | Limite para p < 0,05 | p |
+|---|---:|---:|---:|---:|
+| F1, `random_over` × nenhuma (semente 7) | 0,048 | 0,093 | 0,097 | 0,324 |
+| Bal. acc., SMOTE × nenhuma (semente 7) | 0,082 | 0,079 | 0,082 | 0,052 |
+| F1, SMOTE × nenhuma (semente 42) | 0,068 | 0,100 | 0,105 | 0,199 |
+| Bal. acc., SMOTE × nenhuma (semente 42) | 0,095 | 0,095 | 0,099 | 0,060 |
+
+- A balanced accuracy na semente 7 ficou praticamente no limite (0,0818 × 0,0824), daí o p = 0,052.
+- Efeitos consistentes entre sementes, mas abaixo do limite: custo do `alpha = 1` (≈ 0,03 nas
+  duas sementes, R3) e ganho da reamostragem (≈ 0,05–0,08, R4).
+- O t crítico 2,01 (49 graus de liberdade) é o da tabela t; a fórmula foi conferida em
+  `compare.py` (`corrected_ttest`, com `np.var(d, ddof=1)`).
+
+**Ligação com as outras entradas:** é a razão quantitativa da entrada 3 (o ruído entre folds
+domina diferenças pequenas) e o motivo de as escolhas terem sido confirmadas pela consistência
+entre sementes (entrada 2), e não só pelo p-valor.
+
+**Referência (a conferir):** Nadeau, C.; Bengio, Y. *Inference for the Generalization Error*.
+Machine Learning, v. 52, p. 239–281, 2003. Status: `a conferir`.
+
+**Onde usar:** relatório (metodologia: teste estatístico; discussão e limitações) e slide sobre
+por que quase nada é significativo.
+
+---

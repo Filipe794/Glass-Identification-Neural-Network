@@ -1,0 +1,11 @@
+name: R5_janela_dummy
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: dummy
+target:
+  name: window_vs_other

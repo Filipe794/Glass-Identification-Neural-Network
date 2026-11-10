@@ -2,31 +2,43 @@
 # R10 - Robustez à semente da rede
 # -----------------------------------------------------------------------------
 # !!! RODAR SÓ DEPOIS DO TESTE FINAL (R8). NÃO MUDA A ESCOLHA DO MODELO. !!!
+# (O R8 já foi rodado em 10/11/2026: pode rodar.)
 #
 # Pergunta: o resultado depende da inicialização aleatória dos pesos?
-# Objetivo: repetir o vencedor com outras 5 sementes (random_state da rede). Os folds do CV
-#           e a reamostragem (se houver) continuam com a SEED 42: só a inicialização e a
-#           ordem dos mini-lotes mudam.
-# Depois de rodar:
-#   python stability.py --run <vencedor> --seeds R10_
-#   (mostra o f1_macro de cada semente e se o ranking das variáveis se mantém)
+# Objetivo: repetir a configuração final com outras 5 sementes (random_state da rede). Os folds
+#           do CV e a reamostragem (random_over) continuam com a SEED 42: só a inicialização e a
+#           ordem dos mini-lotes mudam (com ~136 amostras por fold de treino, o adam é full-batch,
+#           então na prática só a inicialização muda).
 #
-# Atualizar antes de rodar:
-# - Todo o baseline: igual ao vencedor final (R7).
-# - O override de model: repita o model do baseline (a semente entra pelo sweep).
+# Rodar:
+#   python run_experiments.py experiments/r10_robustez.yaml
+#   python stability.py --run 20261110_122254_0747b5_R6_alpha_padrao --seeds R10_
+#   (mostra o f1_macro de cada semente e se o ranking das variáveis se mantém; grava em
+#    results/stability/)
+# Opcional (diferenças pareadas contra a semente 42, mesmos folds):
+#   python compare.py --rodada R10_ --ref 20261110_122254_0747b5_R6_alpha_padrao --salvar
+#   (repetir com --metric balanced_accuracy e --metric accuracy)
+#   python tabela_rodada.py --rodada R10_
+#
+# Atualizado em 10/11/2026 (configuração final do R7):
+# - scaler standard; balancing random_over; model [32], tanh, adam, alpha padrão (0.0001), sem
+#   early_stopping. alpha e solver são os padrões e não aparecem na config.
+# - O R10_baseline tem a mesma config da execução R6_alpha_padrao (random_state 42): o runner o
+#   pula pelo hash; a referência entra pelo --run do stability.py (e pelo --ref do compare.py).
+# - O override do model repete o model do baseline (a semente entra pelo sweep).
 # =============================================================================
 
 baseline_name: R10_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor final
+  scaler: standard                            # configuração final (R7)
   selection: none
-  balancing: none                             # ATUALIZAR: vencedor final
-  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedor final
+  balancing: random_over                      # configuração final (R7)
+  model: {name: mlp, hidden_layer_sizes: [32], activation: tanh}  # configuração final (R7)
 
 experiments:
   - name: R10_sementes
     override:
-      model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: model do vencedor final
+      model: {name: mlp, hidden_layer_sizes: [32], activation: tanh}  # model da configuração final
     sweep:
       model.random_state: [1, 7, 123, 2024, 31415]
