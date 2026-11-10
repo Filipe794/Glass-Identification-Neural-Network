@@ -1,0 +1,19 @@
+{
+  "run_id": "20261109_231400_08e38f_R0_dummy_estratificado",
+  "name": "R0_dummy_estratificado",
+  "hash": "08e38fbc7b2c65552f9385b212f4f57b9b000fd0d64eb0d85efc1c1b15537835",
+  "date": "2026-11-09T23:14:00",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 7.03,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

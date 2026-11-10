@@ -1,0 +1,11 @@
+{
+  "tipo": "MLPClassifier",
+  "camadas_ocultas": [
+    32
+  ],
+  "n_parametros": 518,
+  "n_iter": 493,
+  "max_iter": 2000,
+  "convergiu": true,
+  "loss_final": 0.0037716028109964477
+}

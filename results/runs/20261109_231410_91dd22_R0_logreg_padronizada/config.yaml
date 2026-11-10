@@ -1,0 +1,9 @@
+name: R0_logreg_padronizada
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: logreg

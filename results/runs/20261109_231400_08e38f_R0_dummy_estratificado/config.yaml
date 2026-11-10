@@ -1,0 +1,10 @@
+name: R0_dummy_estratificado
+scaler:
+  name: none
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: dummy
+  strategy: stratified

@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_003040_31cfff_R2_solver__solver=lbfgs",
+  "name": "R2_solver__solver=lbfgs",
+  "hash": "31cfff57dbd73fb6adbf0c9a991a3457289fbd0a5efef2296e15e7b0f8adfab2",
+  "date": "2026-11-10T00:30:40",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 22.13,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

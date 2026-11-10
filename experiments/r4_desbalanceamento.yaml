@@ -16,21 +16,27 @@
 #   R4_reamostragem (smote); R4_smote_k testa 2 e 4.
 # - Não combine com early_stopping: true (o builder recusa; ver r3_regularizacao.yaml).
 #   Se o vencedor do R3 usa early_stopping, troque-o por false aqui e registre isso em
-#   docs/anotacoes_artigo.md.
-#   python compare.py --rodada R4_ --incluir <vencedor do R3> --salvar
-#   python compare.py --rodada R4_ --metric balanced_accuracy --incluir <vencedor do R3>
+#   docs/anotacoes_artigo.md. (O vencedor do R3 NÃO usa early_stopping: sem conflito.)
+#   python compare.py --rodada R4_ --incluir 20261110_011819_aec03d_R3_regularizacao__alpha=1_early_stopping=False --salvar
+#   python compare.py --rodada R4_ --metric balanced_accuracy --incluir 20261110_011819_aec03d_R3_regularizacao__alpha=1_early_stopping=False --salvar
+#   python compare.py --rodada R4_ --metric accuracy --incluir 20261110_011819_aec03d_R3_regularizacao__alpha=1_early_stopping=False --salvar
+#   python tabela_rodada.py --rodada R4_
+#   O baseline é a mesma config do vencedor do R3: o runner o pula pelo hash, por isso o --incluir.
 #
-# Atualizar antes de rodar:
-# - scaler e model: vencedores de R1, R2 e R3.
+# Atualizado em 10/11/2026 (vencedores reais):
+# - scaler: standard (R1).
+# - model: [32], tanh, adam (R2b, confirmado com a semente de CV 7) e alpha = 1, sem
+#   early_stopping (R3, confirmado com a semente de CV 7). O solver adam é o padrão e não
+#   aparece na config.
 # =============================================================================
 
 baseline_name: R4_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor de R1
+  scaler: standard                            # vencedor do R1
   selection: none
   balancing: none
-  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedores de R2 e R3
+  model: {name: mlp, hidden_layer_sizes: [32], activation: tanh, alpha: 1}  # vencedores do R2b e do R3
 
 experiments:
   - name: R4_reamostragem

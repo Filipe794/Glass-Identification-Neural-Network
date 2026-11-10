@@ -343,6 +343,7 @@ rodada.
 | **R0** `r0_baselines` | O que se consegue sem a rede? | dummy (`most_frequent`, `stratified`), regressão logística (com e sem `class_weight`) | não há escolha; servem de referência |
 | **R1** `r1_padronizacao` | Quanto a escala das variáveis atrapalha? | `scaler`: `none`, `standard`, `robust`, `minmax` | `f1_macro`; a mais simples sem diferença significativa |
 | **R2** `r2_tamanho_rede` | Quantos neurônios? Que ativação e otimizador? | `hidden_layer_sizes` (4 a 64, e duas camadas), `activation`, `solver` | `f1_macro`; a **menor** rede sem diferença significativa |
+| **R2b** `r2b_interacao` | Os melhores níveis de tamanho, ativação e otimizador funcionam melhor juntos? | grid fatorial dos 3 melhores `hidden_layer_sizes` × `activation` × `solver` (até 18 configurações) | `f1_macro`; a **menor** rede sem diferença significativa; o vencedor é o final do R2 |
 | **R3** `r3_regularizacao` | Quanta regularização? O early stopping ajuda? | `alpha`: 1e-4 a 10 × `early_stopping` (com e sem) | `f1_macro`; o **maior** `alpha` sem diferença significativa |
 | **R4** `r4_desbalanceamento` | Reamostrar as classes raras ajuda? | `balancing`: `none`, `random_over`, `smote`; `k_neighbors` 2 e 4 | `f1_macro` e `balanced_accuracy` |
 | **R5** `r5_agrupamento` | E se o problema virar binário? | `target`: `window_vs_other`, `float_vs_nonfloat` | **exploratória**: não escolhe vencedor |

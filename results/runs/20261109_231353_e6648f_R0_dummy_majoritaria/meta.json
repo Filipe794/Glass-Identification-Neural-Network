@@ -1,0 +1,19 @@
+{
+  "run_id": "20261109_231353_e6648f_R0_dummy_majoritaria",
+  "name": "R0_dummy_majoritaria",
+  "hash": "e6648f7c2a72f165dde77e98fe833b319680cd60003f6706890c263d5ee33975",
+  "date": "2026-11-09T23:13:53",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 6.43,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

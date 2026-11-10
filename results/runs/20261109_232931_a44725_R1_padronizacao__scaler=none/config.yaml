@@ -1,0 +1,12 @@
+name: R1_padronizacao__scaler=none
+scaler:
+  name: none
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 16
+  alpha: 0.001

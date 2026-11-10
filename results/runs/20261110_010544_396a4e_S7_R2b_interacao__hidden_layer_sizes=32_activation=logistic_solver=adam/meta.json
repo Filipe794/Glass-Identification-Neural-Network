@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_010544_396a4e_S7_R2b_interacao__hidden_layer_sizes=32_activation=logistic_solver=adam",
+  "name": "S7_R2b_interacao__hidden_layer_sizes=32_activation=logistic_solver=adam",
+  "hash": "396a4eaded056ce7e492ad231383f90f24a2b5659da0a0ad8f9239f3578252fc",
+  "date": "2026-11-10T01:05:46",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 7,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 48.78,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_011850_7ade21_R3_regularizacao__alpha=10_early_stopping=False",
+  "name": "R3_regularizacao__alpha=10_early_stopping=False",
+  "hash": "7ade2145fa827a4b5c636d522880863e6c08ddb8434a0beb44e023f947a2c2c1",
+  "date": "2026-11-10T01:18:51",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 19.81,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

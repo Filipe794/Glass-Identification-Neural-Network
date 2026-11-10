@@ -1,0 +1,13 @@
+name: R2_ativacao__activation=logistic
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 16
+  alpha: 0.001
+  activation: logistic

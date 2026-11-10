@@ -1,0 +1,12 @@
+name: R2_neuronios__hidden_layer_sizes=64
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 64
+  alpha: 0.001

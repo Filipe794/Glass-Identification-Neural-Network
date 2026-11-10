@@ -1,0 +1,13 @@
+name: R3_regularizacao__alpha=0.0001_early_stopping=True
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  early_stopping: true

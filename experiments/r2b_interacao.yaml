@@ -1,0 +1,53 @@
+# =============================================================================
+# R2b - Interação entre tamanho, ativação e otimizador (rodada de complemento do R2)
+# -----------------------------------------------------------------------------
+# Pergunta: os melhores níveis de tamanho, ativação e solver funcionam melhor JUNTOS do que
+#           isoladamente? (ex.: o tanh vai melhor em redes maiores? o lbfgs favorece redes
+#           pequenas?)
+# Objetivo: o R2 varia um fator por vez e não enxerga interações. Aqui se faz um grid fatorial
+#           só com os 3 MELHORES níveis de cada fator do R2 (não com todos), para pegar as
+#           interações entre os níveis promissores sem testar o que já se mostrou ruim.
+#             hidden_layer_sizes  3 melhores do R2_neuronios
+#             activation          3 melhores do R2_ativacao (são só 3 níveis: entram todos)
+#             solver              adam e lbfgs (são só 2 níveis: entram os dois)
+#           => até 3 x 3 x 2 = 18 configurações. As que coincidem com o baseline, ou com
+#           execuções do R2, são puladas pelo hash.
+# Critério: f1_macro; a MENOR rede (menos parâmetros) sem diferença significativa para a
+#           melhor. Apoio: balanced_accuracy, accuracy, nº de parâmetros e "convergiu (%)".
+#           O vencedor do R2b é o vencedor FINAL do R2 e vira o baseline do R3.
+# Cuidados:
+# - São 18 comparações com a melhor: algumas "diferenças significativas" podem ser acaso
+#   (comparações múltiplas). Registrar isso em docs/anotacoes_artigo.md (Limitações).
+# - Tudo aqui é validação cruzada do treino. O conjunto de teste continua intocado até o R8.
+# - Escolha final robusta: depois de escolher, rodar só as 3 a 5 finalistas com OUTRA semente
+#   de CV (CV_SEED, ver docs/anotacoes_artigo.md) e conferir se a escolha se mantém.
+#
+# Rodar e fechar a rodada (o baseline é pulado pelo hash, por isso o --incluir):
+#   python run_experiments.py experiments/r2b_interacao.yaml
+#   python compare.py --rodada R2b_ --incluir <baseline do R1> --salvar
+#   python compare.py --rodada R2b_ --metric balanced_accuracy --incluir <baseline do R1> --salvar
+#   python compare.py --rodada R2b_ --metric accuracy --incluir <baseline do R1> --salvar
+#   (o prefixo R2b_ não pega as execuções do R2_)
+#
+# Atualizar antes de rodar:
+# - scaler: vencedor do R1 (standard).
+# - Os 3 níveis de hidden_layer_sizes: os 3 melhores do R2_neuronios (valores abaixo são
+#   PROVISÓRIOS).
+# - activation: os 3 melhores do R2_ativacao; solver: os 2 do R2_solver.
+# - Depois do R2b, atualizar o cabeçalho do r3_regularizacao.yaml (vencedor de R2 -> R2b).
+# =============================================================================
+
+baseline_name: R2b_baseline
+
+baseline:
+  scaler: standard                            # vencedor de R1
+  selection: none
+  balancing: none
+  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}
+
+experiments:
+  - name: R2b_interacao
+    sweep:
+      model.hidden_layer_sizes: [[32], [32,16], [64]]     # 3 melhores do R2_neuronios
+      model.activation: [relu, tanh, logistic]        # 3 melhores do R2_ativacao
+      model.solver: [adam, lbfgs]                     # os do R2_solver

@@ -1,0 +1,10 @@
+name: R0_logreg_balanceada
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: logreg
+  class_weight: balanced

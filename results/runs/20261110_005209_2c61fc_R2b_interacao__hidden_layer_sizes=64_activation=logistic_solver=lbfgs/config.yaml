@@ -1,0 +1,14 @@
+name: R2b_interacao__hidden_layer_sizes=64_activation=logistic_solver=lbfgs
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 64
+  alpha: 0.001
+  activation: logistic
+  solver: lbfgs

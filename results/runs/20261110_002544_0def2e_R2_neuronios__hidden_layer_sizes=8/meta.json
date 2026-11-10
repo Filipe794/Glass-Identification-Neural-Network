@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_002544_0def2e_R2_neuronios__hidden_layer_sizes=8",
+  "name": "R2_neuronios__hidden_layer_sizes=8",
+  "hash": "0def2edbc331ff6c29acd1eaaf4eeb100147fc93d6eab82fc30a5dbe47de9a0a",
+  "date": "2026-11-10T00:25:44",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 45.06,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

@@ -10,20 +10,24 @@
 #           raras (5 amostras no treino do fold), essa separação as reduz ainda mais; por
 #           isso a rodada compara COM e SEM. Não vale junto com balancing (a reamostragem
 #           duplicaria amostras entre treino e validação interna: o builder recusa).
-#   python compare.py --rodada R3_ --incluir <vencedor do R2> --salvar
+#   python compare.py --rodada R3_ --incluir 20261110_004521_04de17_R2b_interacao__hidden_layer_sizes=32_activation=tanh_solver=adam --salvar
+#   (repetir com --metric balanced_accuracy e --metric accuracy)
+#   O baseline é a mesma config do vencedor do R2b: o runner o pula pelo hash, por isso o --incluir.
 #   Confira também "convergiu (%)": alpha alto pode mudar o nº de iterações.
 #
-# Atualizar antes de rodar:
-# - scaler e model (hidden_layer_sizes, activation, solver): vencedores de R1 e R2.
+# Atualizado em 10/11/2026:
+# - scaler: standard (R1).
+# - model: [32], tanh, adam (R2b, confirmado com a semente de CV 7). O solver adam é o padrão
+#   e não aparece na config. O alpha 0.001 é o ponto de partida que esta rodada varia.
 # =============================================================================
 
 baseline_name: R3_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor de R1
+  scaler: standard                            # vencedor do R1
   selection: none
   balancing: none
-  model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}  # ATUALIZAR: vencedor de R2 (alpha é o ponto de partida)
+  model: {name: mlp, hidden_layer_sizes: [32], activation: tanh, alpha: 0.001}  # vencedor do R2b (alpha é o ponto de partida)
 
 experiments:
   - name: R3_regularizacao

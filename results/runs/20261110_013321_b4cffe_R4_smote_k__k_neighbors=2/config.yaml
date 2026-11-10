@@ -1,0 +1,14 @@
+name: R4_smote_k__k_neighbors=2
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: smote
+  k_neighbors: 2
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  alpha: 1

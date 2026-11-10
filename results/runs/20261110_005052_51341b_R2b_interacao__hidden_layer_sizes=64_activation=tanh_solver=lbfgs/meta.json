@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_005052_51341b_R2b_interacao__hidden_layer_sizes=64_activation=tanh_solver=lbfgs",
+  "name": "R2b_interacao__hidden_layer_sizes=64_activation=tanh_solver=lbfgs",
+  "hash": "51341b091654c1a9923b0987bf615ba7ab3b7ede73721d9f68e5caeb2e768acf",
+  "date": "2026-11-10T00:50:53",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 13.06,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

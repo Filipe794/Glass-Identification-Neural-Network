@@ -1,0 +1,14 @@
+name: S7_R2b_interacao__hidden_layer_sizes=32x16_activation=tanh_solver=adam
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  - 16
+  alpha: 0.001
+  activation: tanh

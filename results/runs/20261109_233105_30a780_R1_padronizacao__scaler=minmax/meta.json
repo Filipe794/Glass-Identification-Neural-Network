@@ -1,0 +1,19 @@
+{
+  "run_id": "20261109_233105_30a780_R1_padronizacao__scaler=minmax",
+  "name": "R1_padronizacao__scaler=minmax",
+  "hash": "30a780fbfc5bdb63823339fb0ea7dfc2a619422b0e118649d14e4904bd1cf1e3",
+  "date": "2026-11-09T23:31:05",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 44.19,
+  "versions": {
+    "python": "3.14.7",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

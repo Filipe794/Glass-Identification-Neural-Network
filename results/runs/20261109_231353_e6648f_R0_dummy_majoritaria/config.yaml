@@ -1,0 +1,9 @@
+name: R0_dummy_majoritaria
+scaler:
+  name: none
+selection:
+  name: none
+balancing:
+  name: none
+model:
+  name: dummy

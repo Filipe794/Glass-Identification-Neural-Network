@@ -21,7 +21,7 @@
 baseline_name: R2_baseline
 
 baseline:
-  scaler: standard                            # ATUALIZAR: vencedor de R1
+  scaler: standard                            # vencedor de R1
   selection: none
   balancing: none
   model: {name: mlp, hidden_layer_sizes: [16], alpha: 0.001}

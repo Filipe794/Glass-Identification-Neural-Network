@@ -96,6 +96,7 @@ Um YAML por rodada em `experiments/`; o vencedor de uma rodada vira o baseline d
 | `r0_baselines.yaml` | piso (dummy) e modelo simples (regressão logística) | não há escolha |
 | `r1_padronizacao.yaml` | `scaler` (none, standard, robust, minmax) | `f1_macro`, a mais simples no empate |
 | `r2_tamanho_rede.yaml` | `hidden_layer_sizes`, `activation`, `solver` | `f1_macro`, a menor rede no empate |
+| `r2b_interacao.yaml` | grid dos 3 melhores `hidden_layer_sizes` x `activation` x `solver` (interações que o R2 não vê) | `f1_macro`, a menor rede no empate; o vencedor é o final do R2 |
 | `r3_regularizacao.yaml` | `alpha` x `early_stopping` | `f1_macro`, o maior `alpha` no empate |
 | `r4_desbalanceamento.yaml` | `balancing` (none, random_over, smote) e `k_neighbors` | `f1_macro` e `balanced_accuracy` |
 | `r5_agrupamento.yaml` | `target` (janela x outros, float x não float) | exploratória: não escolhe vencedor |
@@ -109,6 +110,10 @@ simples. R7 (escolha), R8 (`final_test.py`, uma vez) e R9 (`mlp_vs_baselines.py`
   pelo usuário antes de rodar. Não preencha vencedores por conta própria.
 - O baseline de cada rodada é a mesma config do vencedor anterior, então o runner o pula pelo
   hash: a referência no `compare.py --rodada` vem por `--incluir <vencedor anterior>`.
+- O R2b complementa o R2: o R2 varia um fator por vez e o R2b testa a combinação dos 3
+  melhores níveis de cada fator. O vencedor do R2b é o vencedor final do R2, então os
+  `# ATUALIZAR: vencedor de R2` do R3 em diante passam a valer para o R2b. O prefixo é `R2b_`
+  (o `--rodada R2_` não pega essas execuções).
 
 ## Restrições importantes
 
