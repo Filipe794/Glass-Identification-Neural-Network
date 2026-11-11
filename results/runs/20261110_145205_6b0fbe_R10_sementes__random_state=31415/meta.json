@@ -1,0 +1,19 @@
+{
+  "run_id": "20261110_145205_6b0fbe_R10_sementes__random_state=31415",
+  "name": "R10_sementes__random_state=31415",
+  "hash": "6b0fbec97b6fc99117f60330bc236e2bacead112cfda5b09924b19bd0d572bb8",
+  "date": "2026-11-10T14:52:06",
+  "train_sha256": "0cc9e81ad95c66b792a142ebad9df7e486ceb8bb02f325dc6d81093fc8351c06",
+  "n_train": 170,
+  "seed": 42,
+  "target": "six_classes",
+  "cv": "RepeatedStratifiedKFold(5x10)",
+  "elapsed_s": 70.18,
+  "versions": {
+    "python": "3.13.15",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "pandas": "3.0.6",
+    "numpy": "2.5.4"
+  }
+}

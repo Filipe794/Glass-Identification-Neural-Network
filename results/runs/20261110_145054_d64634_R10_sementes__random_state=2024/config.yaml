@@ -1,0 +1,13 @@
+name: R10_sementes__random_state=2024
+scaler:
+  name: standard
+selection:
+  name: none
+balancing:
+  name: random_over
+model:
+  name: mlp
+  hidden_layer_sizes:
+  - 32
+  activation: tanh
+  random_state: 2024
